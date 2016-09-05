@@ -9,16 +9,24 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import trikita.anvil.RenderableView;
-import static trikita.anvil.DSL.*;
-
 import trikita.jedux.Action;
 import trikita.talalarmo.Actions;
 import trikita.talalarmo.App;
 import trikita.talalarmo.ui.Theme;
 
+import static trikita.anvil.DSL.FILL;
+import static trikita.anvil.DSL.backgroundColor;
+import static trikita.anvil.DSL.dip;
+import static trikita.anvil.DSL.onClick;
+import static trikita.anvil.DSL.size;
+import static trikita.anvil.DSL.text;
+import static trikita.anvil.DSL.textColor;
+import static trikita.anvil.DSL.textSize;
+
 
 public class AlarmActivity extends Activity {
     private PowerManager.WakeLock mWakeLock;
+    private ShakeListener mShakeListener;
 
     @Override
     protected void onCreate(Bundle b) {
@@ -49,6 +57,11 @@ public class AlarmActivity extends Activity {
                 });
             }
         });
+
+        if(App.getState().settings().shake()) {
+            mShakeListener = new ShakeListener(this);
+            mShakeListener.registerSensor(this::stopAlarm);
+        }
     }
 
     @Override
@@ -70,6 +83,9 @@ public class AlarmActivity extends Activity {
     }
 
     private void stopAlarm() {
+        if(mShakeListener != null)
+            mShakeListener.unregisterSensor();
+
         App.dispatch(new Action<>(Actions.Alarm.DISMISS));
         finish();
     }

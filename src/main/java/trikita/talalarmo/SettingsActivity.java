@@ -73,6 +73,9 @@ public class SettingsActivity extends Activity
             case "clock_format_setting":
                 App.dispatch(new Action<>(Actions.Settings.SET_DETECT_CLOCK_FORMAT, prefs.getBoolean(key, false)));
                 break;
+            case "shake_setting":
+                App.dispatch(new Action<>(Actions.Settings.SET_SHAKE, prefs.getBoolean(key, false)));
+                break;
         }
     }
 

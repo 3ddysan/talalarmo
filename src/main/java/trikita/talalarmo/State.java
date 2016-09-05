@@ -31,6 +31,8 @@ public interface State {
 
         boolean detectClockFormat();
 
+        boolean shake();
+
     }
 
     @Value.Immutable
@@ -155,6 +157,7 @@ public interface State {
                             .vibrate(true)
                             .theme(0)
                             .detectClockFormat(false)
+                            .shake(false)
                             .build())
                     .build();
         }
@@ -184,6 +187,8 @@ public interface State {
                         return ImmutableSettings.copyOf(settings).withTheme((Integer) action.value);
                     case SET_DETECT_CLOCK_FORMAT:
                         return ImmutableSettings.copyOf(settings).withDetectClockFormat((Boolean) action.value);
+                    case SET_SHAKE:
+                        return ImmutableSettings.copyOf(settings).withShake((Boolean) action.value);
                 }
             }
             return settings;

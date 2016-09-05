@@ -165,6 +165,7 @@ public class AlarmLayout {
                 textSize(dip(32));
                 padding(dip(15));
                 text("\ue855"); // "alarm" icon
+                onClick(v -> App.dispatch(new Action<>(Actions.Alarm.WAKEUP)));
             });
             textView(() -> {
                 size(WRAP, WRAP);

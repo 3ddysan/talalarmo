@@ -27,6 +27,11 @@
 		android:title="@string/settings_detect_clock_format"
 		android:defaultValue="true"
 		/>
+	<CheckBoxPreference
+		android:key="shake_setting"
+		android:title="@string/settings_shake_off_alarm"
+		android:defaultValue="false"
+		/>
 	<ListPreference
 		android:key="theme_setting"
 		android:title="@string/settings_theme_option"
