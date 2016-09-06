@@ -30,9 +30,11 @@ public class AlarmService extends Service {
     // Max player volume level
     private final static float MAX_VOLUME = 1.0f;
 
+    private final static float MIN_VOLUME = 0.0f;
+
     private MediaPlayer mPlayer;
     private Vibrator mVibrator;
-    private float mVolumeLevel = 0;
+    private float mVolumeLevel = MAX_VOLUME;
 
     private Handler mHandler = new Handler();
     private Runnable mVibrationRunnable = new Runnable() {
@@ -118,6 +120,10 @@ public class AlarmService extends Service {
                     checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                 ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString();
             }
+            boolean ramping = App.getState().settings().ramping();
+            if(ramping) {
+                mVolumeLevel = MIN_VOLUME;
+            }
             mPlayer.setDataSource(this, Uri.parse(ringtone));
             mPlayer.setLooping(true);
             mPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
@@ -125,7 +131,7 @@ public class AlarmService extends Service {
             mPlayer.prepare();
             mPlayer.start();
 
-            if (App.getState().settings().ramping()) {
+            if (ramping) {
                 mHandler.postDelayed(mVolumeRunnable, VOLUME_INCREASE_DELAY);
             }
         } catch (Exception e) {
