@@ -37,31 +37,39 @@ public class AlarmController implements Store.Middleware<Action, State> {
         next.dispatch(action);
         if (action.type instanceof Actions.Alarm) {
             Actions.Alarm type = (Actions.Alarm) action.type;
+            State state = store.getState();
             switch (type) {
                 case SET_HOUR:
                 case SET_MINUTE:
                 case SET_AM_PM:
                 case RESTART_ALARM:
-                    restartAlarm(store.getState());
+                    restartAlarm(state);
                     break;
                 case WAKEUP:
                     wakeupAlarm();
                     break;
                 case DISMISS:
                     dismissAlarm();
-                    restartAlarm(store.getState());
+                    restartAlarm(state);
                     break;
                 case OFF:
                     cancelAlarm();
+                    break;
+                case TOGGLE_REPEAT_ON_DAY :
+                    restartAlarm(state);
+                    break;
+                case ADVANCED_REPEAT_ON_DAY:
+                    restartAlarm(state);
                     break;
             }
         }
     }
 
     private void restartAlarm(State state) {
-        Calendar c = state.alarm().nextAlarm();
+        final Calendar c = state.alarm().nextAlarm();
+
         Intent intent = new Intent(mContext, AlarmReceiver.class);
-        PendingIntent sender = PendingIntent.getBroadcast(mContext, 0, intent, 0);
+        PendingIntent sender = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         AlarmManager am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {

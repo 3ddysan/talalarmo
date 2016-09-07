@@ -29,4 +29,13 @@
         <item>0</item>
         <item>1</item>
     </string-array>
+    <string-array name="repeat_days">
+        <item>M</item>
+        <item>T</item>
+        <item>W</item>
+        <item>T</item>
+        <item>F</item>
+        <item>S</item>
+        <item>S</item>
+    </string-array>
 </resources>

@@ -3,6 +3,8 @@ package trikita.talalarmo.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.format.DateFormat;
 import android.view.View;
@@ -10,7 +12,7 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
-import static trikita.anvil.DSL.*;
+import java.util.Map;
 
 import trikita.anvil.Anvil;
 import trikita.jedux.Action;
@@ -19,22 +21,143 @@ import trikita.talalarmo.App;
 import trikita.talalarmo.MainActivity;
 import trikita.talalarmo.R;
 
+import static trikita.anvil.BaseDSL.MATCH;
+import static trikita.anvil.DSL.CENTER;
+import static trikita.anvil.DSL.CENTER_VERTICAL;
+import static trikita.anvil.DSL.FILL;
+import static trikita.anvil.DSL.LEFT;
+import static trikita.anvil.DSL.WRAP;
+import static trikita.anvil.DSL.allCaps;
+import static trikita.anvil.DSL.backgroundColor;
+import static trikita.anvil.DSL.backgroundDrawable;
+import static trikita.anvil.DSL.button;
+import static trikita.anvil.DSL.checkBox;
+import static trikita.anvil.DSL.checked;
+import static trikita.anvil.DSL.dip;
+import static trikita.anvil.DSL.enabled;
+import static trikita.anvil.DSL.frameLayout;
+import static trikita.anvil.DSL.gravity;
+import static trikita.anvil.DSL.isPortrait;
+import static trikita.anvil.DSL.layoutGravity;
+import static trikita.anvil.DSL.linearLayout;
+import static trikita.anvil.DSL.margin;
+import static trikita.anvil.DSL.max;
+import static trikita.anvil.DSL.onCheckedChange;
+import static trikita.anvil.DSL.onClick;
+import static trikita.anvil.DSL.onSeekBarChange;
+import static trikita.anvil.DSL.orientation;
+import static trikita.anvil.DSL.padding;
+import static trikita.anvil.DSL.pressed;
+import static trikita.anvil.DSL.progress;
+import static trikita.anvil.DSL.size;
+import static trikita.anvil.DSL.text;
+import static trikita.anvil.DSL.textColor;
+import static trikita.anvil.DSL.textSize;
+import static trikita.anvil.DSL.textView;
+import static trikita.anvil.DSL.typeface;
+import static trikita.anvil.DSL.v;
+import static trikita.anvil.DSL.visibility;
+import static trikita.anvil.DSL.weight;
+import static trikita.anvil.DSL.x;
+import static trikita.anvil.DSL.y;
+
 public class AlarmLayout {
     public static void view() {
         backgroundColor(Theme.get(App.getState().settings().theme()).backgroundColor);
+        boolean on = App.getState().alarm().on();
         linearLayout(() -> {
             orientation(LinearLayout.VERTICAL);
             header();
             frameLayout(() -> {
                 size(FILL, 0);
                 weight(1f);
-                if (App.getState().alarm().on()) {
+                if (on) {
                     alarmOnLayout();
                 } else {
                     alarmOffLayout();
                 }
             });
+            if (on)
+                repeatOnDays(Anvil.currentView().getContext());
             bottomBar();
+        });
+    }
+
+    private static void repeatOnDays(Context context) {
+        Theme theme = Theme.get(App.getState().settings().theme());
+        boolean isRepeatOnDaysActive = App.getState().alarm().advanced();
+
+        View.OnClickListener onClickListener = v -> {
+            App.dispatch(new Action<>(Actions.Alarm.ADVANCED_REPEAT_ON_DAY, (!isRepeatOnDaysActive)));
+        };
+
+        if(isPortrait()) {
+            advancedRepeate(isRepeatOnDaysActive, onClickListener);
+        }
+
+        linearLayout(() -> {
+            size(MATCH, dip(62));
+            backgroundColor(theme.backgroundColor);
+            orientation(LinearLayout.HORIZONTAL);
+            gravity(CENTER);
+
+            if(!isPortrait()) {
+                advancedRepeate(isRepeatOnDaysActive, onClickListener);
+            }
+
+            if(isRepeatOnDaysActive) {
+                String[] dayLabels = context.getResources().getStringArray(R.array.repeat_days);
+                final Map<Integer, Boolean> repeatOnDays = App.getState().alarm().repeatOnDays();
+                int labelIndex = 0;
+                for (Map.Entry<Integer, Boolean> repeatEntry : repeatOnDays.entrySet()) {
+                    final String label = dayLabels[labelIndex++];
+                    final Integer day = repeatEntry.getKey();
+                    button(() ->{
+                        Drawable bg = Anvil.currentView().getResources().getDrawable(R.drawable.oval_shape);
+                        Boolean isPressed = repeatOnDays.get(day);
+                        if (isPressed) {
+                            bg.setColorFilter(theme.accentColor, PorterDuff.Mode.SRC_ATOP);
+                        } else {
+                            bg.setColorFilter(theme.primaryDarkColor, PorterDuff.Mode.SRC_ATOP);
+                        }
+                        backgroundDrawable(bg);
+                        size(dip(40), dip(40));
+                        text(label);
+                        textColor(theme.primaryTextColor);
+                        pressed(isPressed);
+                        enabled(true);
+                        onClick(v -> {
+                            if(App.getState().alarm().repeatOnDaysCount() == 1 && isPressed) {
+                                App.dispatch(new Action<>(Actions.Alarm.ADVANCED_REPEAT_ON_DAY, false));
+                            } else {
+                                App.dispatch(new Action<>(Actions.Alarm.TOGGLE_REPEAT_ON_DAY, day));
+                            }
+                        });
+                    });
+                }
+            }
+
+        });
+    }
+
+    private static void advancedRepeate(boolean isRepeatOnDaysActive, View.OnClickListener onClickListener) {
+        final Theme theme = Theme.get(App.getState().settings().theme());
+        linearLayout(() -> {
+            backgroundColor(theme.backgroundColor);
+            margin(dip(40),dip(0),dip(30),dip(0));
+            orientation(LinearLayout.HORIZONTAL);
+            gravity(LEFT);
+            //margin(dip(30));
+
+            checkBox(() -> {
+                onClick(onClickListener);
+                checked(isRepeatOnDaysActive);
+            });
+            textView(() -> {
+                text("Advanced Repeat");
+                textColor(theme.primaryTextColor);
+                onClick(onClickListener);
+            });
         });
     }
 
