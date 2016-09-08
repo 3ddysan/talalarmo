@@ -13,7 +13,7 @@ public class ShakeListener implements SensorEventListener{
 
     private long mLastShakeTime;
     private static final int TIME_THREASHOLD_MILLISECS = 100;
-    private static final int ACCELERATION_THREASHOLD = 15;
+    private static final int ACCELERATION_THREASHOLD = 30;
 
     public interface OnShake {
         void execute();
@@ -46,7 +46,8 @@ public class ShakeListener implements SensorEventListener{
         float az = event.values[2];
 
         final double magnitudeSquared = ax * ax + ay * ay + az * az;
-        if (magnitudeSquared > ACCELERATION_THREASHOLD * ACCELERATION_THREASHOLD && mShakeListener != null) {
+        int accelerationSquared = ACCELERATION_THREASHOLD * ACCELERATION_THREASHOLD;
+        if (magnitudeSquared > accelerationSquared && mShakeListener != null) {
             mLastShakeTime = curTime;
             mShakeListener.execute();
         }
@@ -54,6 +55,6 @@ public class ShakeListener implements SensorEventListener{
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
+        // do nothing
     }
 }
