@@ -63,6 +63,7 @@ public interface State {
             c.set(Calendar.MINUTE, minutes());
             c.set(Calendar.SECOND, 0);
             c.set(Calendar.MILLISECOND, 0);
+
             if (System.currentTimeMillis() >= c.getTimeInMillis()) {
                 c.add(Calendar.DATE, 1);
             }
@@ -74,30 +75,48 @@ public interface State {
             return c;
         }
 
-        private Calendar nextAlarmAdvanced(Calendar alarm) {
-            int currentDay = alarm.get(Calendar.DAY_OF_WEEK);
-            int firstDayToRepeat = -1;
-            for(Map.Entry<Integer, Boolean> entry : repeatOnDays().entrySet()) {
-                final Integer day = entry.getKey();
-                final Boolean repeatOnDay = entry.getValue();
-                final Calendar current = Calendar.getInstance();
-                current.set(Calendar.DAY_OF_WEEK, day);
+        private Calendar nextAlarmAdvanced(Calendar currentNextAlarm) {
 
-                if(firstDayToRepeat == -1 && repeatOnDay) {
-                    firstDayToRepeat = day;
+            if(isAfterNowAndRepeatOn(currentNextAlarm)){
+                return currentNextAlarm;
+            }
+
+            int firstDayOfWeekRepeatIsEnabled = -1;
+
+            for(Map.Entry<Integer, Boolean> entry : repeatOnDays().entrySet()) {
+                final Integer dayID = entry.getKey();
+                final Boolean repeatIsEnabled = entry.getValue();
+                final Calendar potentialNextAlarm = Calendar.getInstance();
+                potentialNextAlarm.set(Calendar.DAY_OF_WEEK, dayID);
+
+                if(repeatIsEnabled && firstDayOfWeekRepeatIsEnabled == -1) {
+                    firstDayOfWeekRepeatIsEnabled = dayID;
                 }
 
-                if (repeatOnDay && (current.after(alarm)) ) {
-                    alarm.set(Calendar.DAY_OF_WEEK, day);
-                    return alarm;
+                if (repeatIsEnabled && isAfterOrSameDay(currentNextAlarm, potentialNextAlarm)) {
+                    currentNextAlarm.set(Calendar.DAY_OF_WEEK, dayID);
+                    return currentNextAlarm;
                 }
             }
-            if(firstDayToRepeat != -1) {
-                alarm.set(Calendar.DAY_OF_WEEK, firstDayToRepeat);
-                alarm.add(Calendar.WEEK_OF_MONTH, 1);
-                return alarm;
+            if(firstDayOfWeekRepeatIsEnabled != -1) {// schedule for next week, the very first day, which is enabled
+                currentNextAlarm.set(Calendar.DAY_OF_WEEK, firstDayOfWeekRepeatIsEnabled);
+                currentNextAlarm.add(Calendar.WEEK_OF_MONTH, 1);
+                return currentNextAlarm;
             }
             return null;
+        }
+
+        private boolean isAfterNowAndRepeatOn(Calendar currentNextAlarm) {
+            return currentNextAlarm.after(Calendar.getInstance()) && repeatOnDays().get(currentNextAlarm.get(Calendar.DAY_OF_WEEK));
+        }
+
+        private boolean isAfterOrSameDay(Calendar currentNextAlarm, Calendar potentialNextAlarm) {
+            return isSameDay(potentialNextAlarm, currentNextAlarm) ||  potentialNextAlarm.after(currentNextAlarm);
+        }
+
+        private Boolean isSameDay(Calendar cal1, Calendar cal2) {
+            return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                   cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
         }
 
     }

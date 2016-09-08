@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Vibrator;
+import android.util.Log;
 
 import trikita.talalarmo.App;
 
@@ -53,7 +54,13 @@ public class AlarmService extends Service {
             // increase volume level until reach max value
             if (mPlayer != null && mVolumeLevel < MAX_VOLUME) {
                 mVolumeLevel += VOLUME_INCREASE_STEP;
-                mPlayer.setVolume(mVolumeLevel, mVolumeLevel);
+                Log.i("AlarmService", "Ramping up Volume by: " + mVolumeLevel);
+                try {
+                    mPlayer.setVolume(mVolumeLevel, mVolumeLevel);
+                } catch (IllegalStateException ex) {
+                    Log.e("AlarmService", "Error on setting the volume.");
+                    return;
+                }
                 // set next increase in 600ms
                 mHandler.postDelayed(mVolumeRunnable, VOLUME_INCREASE_DELAY);
             }

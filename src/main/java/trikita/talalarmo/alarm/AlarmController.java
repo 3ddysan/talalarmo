@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -67,7 +68,7 @@ public class AlarmController implements Store.Middleware<Action, State> {
 
     private void restartAlarm(State state) {
         final Calendar c = state.alarm().nextAlarm();
-
+        Log.d("AlarmService", "Alarm on " + c.getTime());
         Intent intent = new Intent(mContext, AlarmReceiver.class);
         PendingIntent sender = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
