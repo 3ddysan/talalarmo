@@ -78,76 +78,75 @@ public class AlarmLayout {
                 }
             });
             if (on)
-                repeatOnDays(Anvil.currentView().getContext());
+                advancedRepeatLayout(Anvil.currentView().getContext());
             bottomBar();
         });
     }
 
-    private static void repeatOnDays(Context context) {
+    private static void advancedRepeatLayout(Context context) {
         Theme theme = Theme.get(App.getState().settings().theme());
-        boolean isRepeatOnDaysActive = App.getState().alarm().advanced();
-
-        View.OnClickListener onClickListener = v -> {
-            App.dispatch(new Action<>(Actions.Alarm.ADVANCED_REPEAT_ON_DAY, (!isRepeatOnDaysActive)));
-        };
-
-        if(isPortrait()) {
-            advancedRepeate(isRepeatOnDaysActive, onClickListener);
-        }
+        boolean isAdvancedRepeatEnabled = App.getState().alarm().advanced();
 
         linearLayout(() -> {
-            size(MATCH, dip(62));
+            size(MATCH, dip(isPortrait() ? 75 : 40));
             backgroundColor(theme.backgroundColor);
-            orientation(LinearLayout.HORIZONTAL);
+            orientation(isPortrait() ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
             gravity(CENTER);
 
-            if(!isPortrait()) {
-                advancedRepeate(isRepeatOnDaysActive, onClickListener);
-            }
+            advancedRepeatCheckbox(isAdvancedRepeatEnabled, v -> {
+                App.dispatch(new Action<>(Actions.Alarm.ADVANCED_REPEAT_ON_DAY, (!isAdvancedRepeatEnabled)));
+            });
 
-            if(isRepeatOnDaysActive) {
-                String[] dayLabels = context.getResources().getStringArray(R.array.repeat_days);
-                final Map<Integer, Boolean> repeatOnDays = App.getState().alarm().repeatOnDays();
-                int labelIndex = 0;
-                for (Map.Entry<Integer, Boolean> repeatEntry : repeatOnDays.entrySet()) {
-                    final String label = dayLabels[labelIndex++];
-                    final Integer day = repeatEntry.getKey();
-                    button(() ->{
-                        Drawable bg = Anvil.currentView().getResources().getDrawable(R.drawable.oval_shape);
-                        Boolean isPressed = repeatOnDays.get(day);
-                        if (isPressed) {
-                            bg.setColorFilter(theme.accentColor, PorterDuff.Mode.SRC_ATOP);
-                        } else {
-                            bg.setColorFilter(theme.primaryDarkColor, PorterDuff.Mode.SRC_ATOP);
-                        }
-                        backgroundDrawable(bg);
-                        size(dip(40), dip(40));
-                        text(label);
-                        textColor(theme.primaryTextColor);
-                        pressed(isPressed);
-                        enabled(true);
-                        onClick(v -> {
-                            if(App.getState().alarm().repeatOnDaysCount() == 1 && isPressed) {
-                                App.dispatch(new Action<>(Actions.Alarm.ADVANCED_REPEAT_ON_DAY, false));
+
+            linearLayout(() -> {
+                orientation(LinearLayout.HORIZONTAL);
+                gravity(CENTER);
+                size(MATCH, dip(40));
+
+                if (isAdvancedRepeatEnabled) {
+                    String[] dayLabels = context.getResources().getStringArray(R.array.repeat_days);
+                    final Map<Integer, Boolean> repeatOnDays = App.getState().alarm().repeatOnDays();
+                    int labelIndex = 0;
+                    for (Map.Entry<Integer, Boolean> repeatEntry : repeatOnDays.entrySet()) {
+                        final String label = dayLabels[labelIndex++];
+                        final Integer day = repeatEntry.getKey();
+                        button(() ->{
+                            Drawable bg = Anvil.currentView().getResources().getDrawable(R.drawable.oval_shape);
+                            Boolean isPressed = repeatOnDays.get(day);
+                            if (isPressed) {
+                                bg.setColorFilter(theme.accentColor, PorterDuff.Mode.SRC_ATOP);
                             } else {
-                                App.dispatch(new Action<>(Actions.Alarm.TOGGLE_REPEAT_ON_DAY, day));
+                                bg.setColorFilter(theme.primaryDarkColor, PorterDuff.Mode.SRC_ATOP);
                             }
+                            backgroundDrawable(bg);
+                            size(dip(40), dip(40));
+                            text(label);
+                            textColor(theme.primaryTextColor);
+                            pressed(isPressed);
+                            enabled(true);
+                            onClick(v -> {
+                                if(App.getState().alarm().repeatOnDaysCount() == 1 && isPressed) {
+                                    App.dispatch(new Action<>(Actions.Alarm.ADVANCED_REPEAT_ON_DAY, false));
+                                } else {
+                                    App.dispatch(new Action<>(Actions.Alarm.TOGGLE_REPEAT_ON_DAY, day));
+                                }
+                            });
                         });
-                    });
+                    }
                 }
-            }
+
+            });
 
         });
     }
 
-    private static void advancedRepeate(boolean isRepeatOnDaysActive, View.OnClickListener onClickListener) {
+    private static void advancedRepeatCheckbox(boolean isRepeatOnDaysActive, View.OnClickListener onClickListener) {
         final Theme theme = Theme.get(App.getState().settings().theme());
         linearLayout(() -> {
             backgroundColor(theme.backgroundColor);
-            margin(dip(40),dip(0),dip(30),dip(0));
+            //margin(dip(40),0,dip(30),dip(0));
             orientation(LinearLayout.HORIZONTAL);
-            gravity(LEFT);
-            //margin(dip(30));
+            gravity(CENTER);
 
             checkBox(() -> {
                 onClick(onClickListener);
