@@ -153,7 +153,7 @@ public class AlarmLayout {
                 checked(isRepeatOnDaysActive);
             });
             textView(() -> {
-                text("Advanced Repeat");
+                text(R.string.settings_advanced_repeat);
                 textColor(theme.primaryTextColor);
                 onClick(onClickListener);
             });
