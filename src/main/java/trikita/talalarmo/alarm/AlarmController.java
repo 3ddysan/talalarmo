@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -21,9 +22,12 @@ import trikita.talalarmo.State;
 public class AlarmController implements Store.Middleware<Action, State> {
 
     private final Context mContext;
+    private final Handler handler;
+    private Runnable delayedAlarmRestart;
 
     public AlarmController(Context c) {
         mContext = c;
+        handler = new Handler();
     }
 
     @Override
@@ -46,7 +50,7 @@ public class AlarmController implements Store.Middleware<Action, State> {
                 case TOGGLE_REPEAT_ON_DAY:
                 case ADVANCED_REPEAT_ON_DAY:
                 case RESTART_ALARM:
-                    restartAlarm(state);
+                    restartAlarmDelayed(state);
                     break;
                 case WAKEUP:
                     wakeupAlarm();
@@ -60,6 +64,16 @@ public class AlarmController implements Store.Middleware<Action, State> {
                     break;
             }
         }
+    }
+
+    private void restartAlarmDelayed(final State state) {
+        if(delayedAlarmRestart != null)
+            handler.removeCallbacks(delayedAlarmRestart);
+        
+        handler.postDelayed(delayedAlarmRestart = () -> {
+            delayedAlarmRestart = null;
+            restartAlarm(state);
+        }, 1000);
     }
 
     private void restartAlarm(State state) {
