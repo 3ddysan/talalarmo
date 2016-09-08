@@ -102,39 +102,43 @@ public class AlarmLayout {
                 size(MATCH, dip(40));
 
                 if (isAdvancedRepeatEnabled) {
-                    String[] dayLabels = context.getResources().getStringArray(R.array.repeat_days);
+                    final String[] dayLabels = context.getResources().getStringArray(R.array.repeat_days);
                     final Map<Integer, Boolean> repeatOnDays = App.getState().alarm().repeatOnDays();
                     int labelIndex = 0;
                     for (Map.Entry<Integer, Boolean> repeatEntry : repeatOnDays.entrySet()) {
                         final String label = dayLabels[labelIndex++];
-                        final Integer day = repeatEntry.getKey();
-                        button(() ->{
-                            Drawable bg = Anvil.currentView().getResources().getDrawable(R.drawable.oval_shape);
-                            Boolean isPressed = repeatOnDays.get(day);
-                            if (isPressed) {
-                                bg.setColorFilter(theme.accentColor, PorterDuff.Mode.SRC_ATOP);
-                            } else {
-                                bg.setColorFilter(theme.primaryDarkColor, PorterDuff.Mode.SRC_ATOP);
-                            }
-                            backgroundDrawable(bg);
-                            size(dip(40), dip(40));
-                            text(label);
-                            textColor(theme.primaryTextColor);
-                            pressed(isPressed);
-                            enabled(true);
-                            onClick(v -> {
-                                if(App.getState().alarm().repeatOnDaysCount() == 1 && isPressed) {
-                                    App.dispatch(new Action<>(Actions.Alarm.ADVANCED_REPEAT_ON_DAY, false));
-                                } else {
-                                    App.dispatch(new Action<>(Actions.Alarm.TOGGLE_REPEAT_ON_DAY, day));
-                                }
-                            });
-                        });
+                        final Integer calendarDay = repeatEntry.getKey();
+                        final Boolean isPressed = repeatEntry.getValue();
+                        advancedRepeatButton(theme, label, calendarDay, isPressed);
                     }
                 }
 
             });
 
+        });
+    }
+
+    private static void advancedRepeatButton(Theme theme, String label, Integer day, Boolean isPressed) {
+        button(() ->{
+            Drawable bg = Anvil.currentView().getResources().getDrawable(R.drawable.oval_shape);
+            if (isPressed) {
+                bg.setColorFilter(theme.accentColor, PorterDuff.Mode.SRC_ATOP);
+            } else {
+                bg.setColorFilter(theme.primaryDarkColor, PorterDuff.Mode.SRC_ATOP);
+            }
+            backgroundDrawable(bg);
+            size(dip(40), dip(40));
+            text(label);
+            textColor(theme.primaryTextColor);
+            pressed(isPressed);
+            enabled(true);
+            onClick(v -> {
+                if(App.getState().alarm().repeatOnDaysCount() == 1 && isPressed) {
+                    App.dispatch(new Action<>(Actions.Alarm.ADVANCED_REPEAT_ON_DAY, false));
+                } else {
+                    App.dispatch(new Action<>(Actions.Alarm.TOGGLE_REPEAT_ON_DAY, day));
+                }
+            });
         });
     }
 
