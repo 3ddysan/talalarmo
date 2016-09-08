@@ -69,7 +69,7 @@ public class AlarmController implements Store.Middleware<Action, State> {
     private void restartAlarmDelayed(final State state) {
         if(delayedAlarmRestart != null)
             handler.removeCallbacks(delayedAlarmRestart);
-        
+
         handler.postDelayed(delayedAlarmRestart = () -> {
             delayedAlarmRestart = null;
             restartAlarm(state);
