@@ -26,15 +26,13 @@ It does only one function but does it well. Only one alarm time is supported and
 
 * Clean, minimal and easy-to-use design with modern material UI.
 * Set alarm with only two taps - the easiest way to set alarm time.
-* Only one alarm time is supported and it's recurring daily. You will never miss it or be disturbed by a wrong alarm.
+* Only one alarm time is supported and it's recurring daily by default or on specific days.
 * Choose alarm music, optionally turn on the vibration
 * Wake up easily with gentle alarm (gradually increasing alarm volume)
 * Dark and light themes
+* Autodetect 24h/12h Clock Format 
+* Shake Off Alarm (TODO)
 
-## Download
-
-* [F-Droid](https://f-droid.org/repository/browse/?fdid=trikita.talalarmo)
-* [Google Play](https://play.google.com/store/apps/details?id=trikita.talalarmo)
 
 ## Libraries
 
