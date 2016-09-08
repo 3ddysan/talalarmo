@@ -88,16 +88,18 @@ public interface State {
             for(Map.Entry<Integer, Boolean> entry : repeatOnDays().entrySet()) {
                 final Integer dayID = entry.getKey();
                 final Boolean repeatIsEnabled = entry.getValue();
-                final Calendar potentialNextAlarm = Calendar.getInstance();
-                potentialNextAlarm.set(Calendar.DAY_OF_WEEK, dayID);
 
-                if(repeatIsEnabled && firstDayOfWeekRepeatIsEnabled == -1) {
+                if(!repeatIsEnabled)
+                    continue;
+
+                final Calendar potentialNextAlarm = buildPotentialNextAlarm(currentNextAlarm, dayID);
+
+                if(firstDayOfWeekRepeatIsEnabled == -1) {
                     firstDayOfWeekRepeatIsEnabled = dayID;
                 }
 
-                if (repeatIsEnabled && isAfterOrSameDay(currentNextAlarm, potentialNextAlarm)) {
-                    currentNextAlarm.set(Calendar.DAY_OF_WEEK, dayID);
-                    return currentNextAlarm;
+                if (isAfterOrSameDay(currentNextAlarm, potentialNextAlarm)) {
+                    return potentialNextAlarm;
                 }
             }
             if(firstDayOfWeekRepeatIsEnabled != -1) {// schedule for next week, the very first day, which is enabled
@@ -105,7 +107,16 @@ public interface State {
                 currentNextAlarm.add(Calendar.WEEK_OF_MONTH, 1);
                 return currentNextAlarm;
             }
-            return null;
+            throw new IllegalStateException("Next Alarm may only be in range Monday to Sunday.");
+        }
+
+        private Calendar buildPotentialNextAlarm(Calendar currentNextAlarm, Integer dayID) {
+            final Calendar potentialNextAlarm = (Calendar) currentNextAlarm.clone();
+            potentialNextAlarm.set(Calendar.DAY_OF_WEEK, dayID);
+            if(dayID == Calendar.SUNDAY) {
+                potentialNextAlarm.add(Calendar.DAY_OF_WEEK, 7); // monday is first day of week
+            }
+            return potentialNextAlarm;
         }
 
         private boolean isAfterNowAndRepeatOn(Calendar currentNextAlarm) {
@@ -113,7 +124,7 @@ public interface State {
         }
 
         private boolean isAfterOrSameDay(Calendar currentNextAlarm, Calendar potentialNextAlarm) {
-            return isSameDay(potentialNextAlarm, currentNextAlarm) ||  potentialNextAlarm.after(currentNextAlarm);
+            return isSameDay(potentialNextAlarm, currentNextAlarm) || potentialNextAlarm.after(currentNextAlarm);
         }
 
         private Boolean isSameDay(Calendar cal1, Calendar cal2) {
