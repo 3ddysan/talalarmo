@@ -5,7 +5,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.3'
         classpath 'me.tatarka:gradle-retrolambda:3.2.5'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.6'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     }
 }
 apply plugin: 'com.android.application'
@@ -53,9 +53,9 @@ repositories {
 dependencies {
     compile 'com.github.trikita:jedux:-SNAPSHOT'
     compile 'co.trikita:anvil-sdk15:0.3.1'
-    compile 'org.immutables:gson:2.1.14'
-    apt 'org.immutables:value:2.1.14'
-    provided 'org.immutables:value:2.1.14'
+    compile 'org.immutables:gson:2.3'
+    apt 'org.immutables:value:2.3'
+    provided 'org.immutables:value:2.3'
 }
 
 apply from: 'https://raw.github.com/trikita/gradle-android-signing/master/gradle-android-signing.gradle'
