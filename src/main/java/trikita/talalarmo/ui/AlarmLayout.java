@@ -166,11 +166,7 @@ public class AlarmLayout {
                 });
                 textView(() -> {
                     size(WRAP, WRAP);
-                    if (is24hFormat) {
-                        text(String.format("%02d", hours));
-                    } else {
-                        text(clockSize);
-                    }
+                    text(String.format("%02d", hours));
                     layoutGravity(CENTER);
                     typeface("fonts/Roboto-Light.ttf");
                     textSize(hourCircleSize * 0.3f);
