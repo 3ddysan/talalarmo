@@ -248,15 +248,25 @@ public class AlarmLayout {
                     max(is24hFormat ? 24 : 12);
                     onSeekBarChange((v, progress, fromUser) -> {
                         if (fromUser) {
-                            int offset = is24hFormat && isPM ? 12 : 0;
-                            App.dispatch(new Action<>(Actions.Alarm.SET_HOUR, progress - offset));
+                            if(is24hFormat) {
+                                App.dispatch(new Action<>(Actions.Alarm.SET_AM_PM, progress < 12));
+                            }
+                            App.dispatch(new Action<>(Actions.Alarm.SET_HOUR, progress % 12));
                         }
                     });
                     Anvil.currentView().invalidate();
                 });
                 textView(() -> {
                     size(WRAP, WRAP);
-                    text(String.format("%02d", hours));
+                    if (is24hFormat) {
+                        text(String.format("%02d", hours));
+                    } else {
+                        if (hours == 0) {
+                            text("12");
+                        } else {
+                            text(String.format("%02d", hours));
+                        }
+                    }
                     layoutGravity(CENTER);
                     typeface("fonts/Roboto-Light.ttf");
                     textSize(hourCircleSize * 0.3f);
