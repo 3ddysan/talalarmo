@@ -35,4 +35,5 @@
         <item>С</item>
         <item>В</item>
     </string-array>
+    <string name="settings_shake_off_alarm">Shake to dismiss alarm</string>
 </resources>
