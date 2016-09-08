@@ -43,6 +43,8 @@ public class AlarmController implements Store.Middleware<Action, State> {
                 case SET_HOUR:
                 case SET_MINUTE:
                 case SET_AM_PM:
+                case TOGGLE_REPEAT_ON_DAY:
+                case ADVANCED_REPEAT_ON_DAY:
                 case RESTART_ALARM:
                     restartAlarm(state);
                     break;
@@ -55,12 +57,6 @@ public class AlarmController implements Store.Middleware<Action, State> {
                     break;
                 case OFF:
                     cancelAlarm();
-                    break;
-                case TOGGLE_REPEAT_ON_DAY :
-                    restartAlarm(state);
-                    break;
-                case ADVANCED_REPEAT_ON_DAY:
-                    restartAlarm(state);
                     break;
             }
         }
