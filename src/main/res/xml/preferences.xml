@@ -25,7 +25,7 @@
 	<CheckBoxPreference
 		android:key="clock_format_setting"
 		android:title="@string/settings_detect_clock_format"
-		android:defaultValue="true"
+		android:defaultValue="false"
 		/>
 	<CheckBoxPreference
 		android:key="shake_setting"
