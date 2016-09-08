@@ -9,6 +9,7 @@
     <string name="settings_vibration_option">Вібросигнал</string>
     <string name="settings_volume_increase_option">Плавне зростання гучності</string>
     <string name="tv_start_alarm_text">Натисніть, щоб\nвстановити будильник</string>
+    <string name="settings_advanced_repeat">Advanced Repeat</string>
 
     <string name="hour">1 годину</string>
     <string name="hours">%s год.</string>
@@ -24,5 +25,14 @@
     <string-array name="settings_themes">
         <item>Світла</item>
         <item>Темна</item>
+    </string-array>
+    <string-array name="repeat_days">
+        <item>M</item>
+        <item>T</item>
+        <item>W</item>
+        <item>T</item>
+        <item>F</item>
+        <item>S</item>
+        <item>S</item>
     </string-array>
 </resources>

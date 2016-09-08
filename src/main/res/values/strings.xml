@@ -9,6 +9,7 @@
     <string name="settings_vibration_option">Vibrate</string>
     <string name="settings_volume_increase_option">Fade-in sound</string>
     <string name="tv_start_alarm_text">Tap here\nto set alarm</string>
+    <string name="settings_advanced_repeat">Advanced Repeat</string>
 
     <string name="hour">1 hour</string>
     <string name="hours">%s hours</string>
