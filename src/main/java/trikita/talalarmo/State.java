@@ -113,7 +113,7 @@ public interface State {
         private Calendar buildPotentialNextAlarm(Calendar currentNextAlarm, Integer dayID) {
             final Calendar potentialNextAlarm = (Calendar) currentNextAlarm.clone();
             potentialNextAlarm.set(Calendar.DAY_OF_WEEK, dayID);
-            if(dayID == Calendar.SUNDAY) {
+            if(dayID == Calendar.SUNDAY && Default.IS_SUNDAY_FIRST_WEEK_OF_DAY) {
                 potentialNextAlarm.add(Calendar.DAY_OF_WEEK, 7); // monday is first day of week
             }
             return potentialNextAlarm;
@@ -140,7 +140,9 @@ public interface State {
 
     class Default {
         static final Map<Integer, Boolean> REPEAT_ON_ALL_DAYS;
+        static final Boolean IS_SUNDAY_FIRST_WEEK_OF_DAY;
         static {
+            IS_SUNDAY_FIRST_WEEK_OF_DAY = Calendar.getInstance().getFirstDayOfWeek() == Calendar.SUNDAY;
             Map<Integer, Boolean> map = new LinkedHashMap<>();
             map.put(Calendar.MONDAY, true);
             map.put(Calendar.TUESDAY, true);
