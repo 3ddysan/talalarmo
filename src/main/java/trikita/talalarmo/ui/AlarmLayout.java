@@ -371,7 +371,12 @@ public class AlarmLayout {
         long t = App.getState().alarm().nextAlarm().getTimeInMillis() - System.currentTimeMillis() - 1;
         t = t / 60 / 1000;
         int m = (int) (t % 60);
-        int h = (int) (t / 60);
+        int h = (int) (t / 60) % 24;
+        int d = (int) (t / 60 / 24);
+
+        String daySeq = (d == 0) ? "" :
+                (d == 1) ? c.getString(R.string.day) :
+                        c.getString(R.string.days, Long.toString(d));
 
         String minSeq = (m == 0) ? "" :
                 (m == 1) ? c.getString(R.string.minute) :
@@ -381,10 +386,10 @@ public class AlarmLayout {
                 (h == 1) ? c.getString(R.string.hour) :
                         c.getString(R.string.hours, Long.toString(h));
 
-        int index = ((h > 0) ? 1 : 0) | ((m > 0) ? 2 : 0);
+        int index = ((d > 0) ? 4 : 0) | ((h > 0) ? 1 : 0) | ((m > 0) ? 2 : 0);
 
         String[] formats = c.getResources().getStringArray(R.array.alarm_set);
-        return String.format(formats[index], hourSeq, minSeq);
+        return String.format(formats[index], daySeq, hourSeq, minSeq);
     }
 
     private static void showSettingsMenu(View v) {

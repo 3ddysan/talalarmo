@@ -15,12 +15,18 @@
     <string name="hours">%s hours</string>
     <string name="minute">1 minute</string>
     <string name="minutes">%s minutes</string>
+    <string name="day">1 day</string>
+    <string name="days">%s days</string>
 
     <string-array name="alarm_set">
         <item>This alarm is set for less than 1 minute from now</item>
-        <item>This alarm is set for %1$s from now</item>
         <item>This alarm is set for %2$s from now</item>
+        <item>This alarm is set for %3$s from now</item>
+        <item>This alarm is set for %2$s and %3$s from now</item>
+        <item>This alarm is set for %1$s from now</item>
         <item>This alarm is set for %1$s and %2$s from now</item>
+        <item>This alarm is set for more than %1$s, %3$s from now</item>
+        <item>This alarm is set for more than %1$s, %2$s, %3$s from now</item>
     </string-array>
     <string-array name="settings_themes">
         <item>Light</item>
