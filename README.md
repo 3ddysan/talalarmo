@@ -30,8 +30,8 @@ It does only one function but does it well. Only one alarm time is supported and
 * Choose alarm music, optionally turn on the vibration
 * Wake up easily with gentle alarm (gradually increasing alarm volume)
 * Dark and light themes
-* Autodetect 24h/12h Clock Format 
-* Shake Off Alarm (TODO)
+* Autodetect 24h/12h clock format 
+* Shake to dismiss alarm
 
 
 ## Libraries
