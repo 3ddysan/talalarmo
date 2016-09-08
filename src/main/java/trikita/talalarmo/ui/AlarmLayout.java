@@ -19,6 +19,7 @@ import trikita.talalarmo.MainActivity;
 import trikita.talalarmo.R;
 
 import static trikita.anvil.BaseDSL.MATCH;
+import static trikita.anvil.BaseDSL.RIGHT;
 import static trikita.anvil.DSL.CENTER;
 import static trikita.anvil.DSL.CENTER_VERTICAL;
 import static trikita.anvil.DSL.FILL;
@@ -326,6 +327,7 @@ public class AlarmLayout {
     private static void bottomBar() {
         linearLayout(() -> {
             size(FILL, dip(62));
+            gravity(RIGHT);
             backgroundColor(Theme.get(App.getState().settings().theme()).backgroundTranslucentColor);
 
             Theme.materialIcon(() -> {
