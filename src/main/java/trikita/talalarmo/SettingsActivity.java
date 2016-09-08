@@ -39,18 +39,21 @@ public class SettingsActivity extends Activity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
 
-        SettingsFragment preferenceFragment = new SettingsFragment();
-
-        SensorManager mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        if (mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) == null){
-            Preference preference = preferenceFragment.findPreference("shake_setting");
-            preference.setShouldDisableView(true);
-            preference.setEnabled(false);
-        }
+        SettingsFragment preferenceFragment = buildSettingsFragment();
 
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, preferenceFragment)
                 .commit();
+    }
+
+    private SettingsFragment buildSettingsFragment() {
+        SensorManager mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Boolean disableShakeSetting = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) == null;
+        SettingsFragment preferenceFragment = new SettingsFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(SettingsFragment.DISABLE_SHAKE_SETTING, disableShakeSetting);
+        preferenceFragment.setArguments(args);
+        return preferenceFragment;
     }
 
     @Override
@@ -93,10 +96,26 @@ public class SettingsActivity extends Activity
     }
 
     public static class SettingsFragment extends PreferenceFragment {
+
+        public static final String DISABLE_SHAKE_SETTING = "DISABLE_SHAKE_SETTING";
+
+        private Boolean disableShakeSetting = false;
+
+        @Override
+        public void setArguments(Bundle args) {
+            super.setArguments(args);
+            disableShakeSetting = args.getBoolean(DISABLE_SHAKE_SETTING, false);
+        }
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preferences);
+            if(disableShakeSetting) {
+                Preference preference = findPreference("shake_setting");
+                preference.setShouldDisableView(true);
+                preference.setEnabled(false);
+            }
         }
     }
 }
