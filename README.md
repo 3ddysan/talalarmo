@@ -17,6 +17,9 @@ It does only one function but does it well. Only one alarm time is supported and
 <img alt="Preview" src="artwork/setting-alarm.png" width="30%" />
 <img alt="Preview" src="artwork/alarm-goes-off.png" width="30%" />
 <img alt="Preview" src="artwork/dark-theme.png" width="30%" />
+<br/ >
+<img alt="Preview" src="artwork/setting-alarm-24hformat.png" width="30%" />
+<img alt="Preview" src="artwork/setting-alarm-with-repeat.png" width="30%" />
 
 
 ## Features
