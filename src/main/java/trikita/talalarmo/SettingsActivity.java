@@ -2,11 +2,15 @@ package trikita.talalarmo;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
@@ -35,8 +39,17 @@ public class SettingsActivity extends Activity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
 
+        SettingsFragment preferenceFragment = new SettingsFragment();
+
+        SensorManager mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        if (mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) == null){
+            Preference preference = preferenceFragment.findPreference("shake_setting");
+            preference.setShouldDisableView(true);
+            preference.setEnabled(false);
+        }
+
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
+                .replace(android.R.id.content, preferenceFragment)
                 .commit();
     }
 
