@@ -137,10 +137,7 @@ public class AlarmLayout {
 
             final boolean is24hFormat = App.getState().settings().detectClockFormat() &&
                     DateFormat.is24HourFormat(Anvil.currentView().getContext());
-            final boolean isPM = !App.getState().alarm().am();
-            int hours = App.getState().alarm().hours() + (is24hFormat && isPM ? 12 : 0);
-            final int clockSize = (is24hFormat ? 24 : 12);
-            
+
             frameLayout(() -> {
                 size(hourCircleSize, hourCircleSize);
                 if (isPortrait()) {
@@ -152,10 +149,13 @@ public class AlarmLayout {
                 }
                 gravity(CENTER);
 
+                final boolean isPM = !App.getState().alarm().am();
+                int hours = App.getState().alarm().hours() + (is24hFormat && isPM ? 12 : 0);
+
                 v(ClockView.class, () -> {
                     size(FILL, FILL);
                     progress(hours);
-                    max(clockSize);
+                    max(is24hFormat ? 24 : 12);
                     onSeekBarChange((v, progress, fromUser) -> {
                         if (fromUser) {
                             int offset = is24hFormat && isPM ? 12 : 0;
