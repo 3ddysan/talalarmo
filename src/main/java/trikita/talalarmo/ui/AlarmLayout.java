@@ -1,16 +1,13 @@
 package trikita.talalarmo.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 
 import java.util.Map;
 
@@ -386,20 +383,6 @@ public class AlarmLayout {
     }
 
     private static void showSettingsMenu(View v) {
-        PopupMenu menu = new PopupMenu(v.getContext(), v);
-        menu.getMenuInflater().inflate(R.menu.overflow_popup, menu.getMenu());
-        menu.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.menu_settings) {
-                ((MainActivity) v.getContext()).openSettings();
-            } else if (item.getItemId() == R.id.menu_feedback) {
-                Context c = v.getContext();
-                Intent intent = new Intent(Intent.ACTION_SENDTO,
-                        Uri.fromParts("mailto", "adm.trikita@gmail.com", null));
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Feedback about Talalarmo");
-                v.getContext().startActivity(Intent.createChooser(intent, c.getString(R.string.leave_feedback)));
-            }
-            return true;
-        });
-        menu.show();
+        ((MainActivity) v.getContext()).openSettings();
     }
 }
