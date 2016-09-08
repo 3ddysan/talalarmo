@@ -70,7 +70,7 @@ public class AlarmController implements Store.Middleware<Action, State> {
         final Calendar c = state.alarm().nextAlarm();
         Log.d("AlarmService", "Alarm on " + c.getTime());
         Intent intent = new Intent(mContext, AlarmReceiver.class);
-        PendingIntent sender = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent sender = PendingIntent.getBroadcast(mContext, 0, intent, 0);
 
         AlarmManager am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -88,7 +88,7 @@ public class AlarmController implements Store.Middleware<Action, State> {
                     fmt.format(c.getTime()));
         } else {
             Intent showIntent = new Intent(mContext, MainActivity.class);
-            PendingIntent showOperation = PendingIntent.getActivity(mContext, 0, showIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent showOperation = PendingIntent.getActivity(mContext, 0, showIntent, 0);
             AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(c.getTimeInMillis(), showOperation);
             am.setAlarmClock(alarmClockInfo, sender);
         }
