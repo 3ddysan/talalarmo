@@ -141,7 +141,6 @@ public class AlarmLayout {
         final Theme theme = Theme.get(App.getState().settings().theme());
         linearLayout(() -> {
             backgroundColor(theme.backgroundColor);
-            //margin(dip(40),0,dip(30),dip(0));
             orientation(LinearLayout.HORIZONTAL);
             gravity(CENTER);
 
