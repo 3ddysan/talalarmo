@@ -100,7 +100,7 @@ public class AlarmLayout {
 
             linearLayout(() -> {
                 orientation(LinearLayout.HORIZONTAL);
-                gravity((largeScreen && !isPortrait ? LEFT : CENTER) | CENTER_VERTICAL);
+                gravity(isPortrait ? CENTER : LEFT | CENTER_VERTICAL);
                 size(MATCH, MATCH);
 
                 if (isAdvancedRepeatEnabled) {
