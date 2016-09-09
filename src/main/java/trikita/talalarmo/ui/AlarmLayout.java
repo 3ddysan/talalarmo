@@ -75,8 +75,9 @@ public class AlarmLayout {
                     alarmOffLayout();
                 }
             });
-            if (on)
+            if (on) {
                 advancedRepeatLayout(Anvil.currentView().getContext());
+            }
             bottomBar();
         });
     }
@@ -86,20 +87,21 @@ public class AlarmLayout {
         boolean isAdvancedRepeatEnabled = App.getState().alarm().advanced();
 
         linearLayout(() -> {
-            size(MATCH, dip(isPortrait() ? 75 : 40));
+            boolean largeScreen = isLargeScreen();
+            boolean isPortrait = isPortrait();
+            size(MATCH, dip(isPortrait ? 80 : 40) + (largeScreen ? 100 : 0));
             backgroundColor(theme.backgroundColor);
-            orientation(isPortrait() ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
+            orientation(isPortrait ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
             gravity(CENTER);
 
             advancedRepeatCheckbox(isAdvancedRepeatEnabled, v -> {
                 App.dispatch(new Action<>(Actions.Alarm.ADVANCED_REPEAT_ON_DAY, (!isAdvancedRepeatEnabled)));
             });
 
-
             linearLayout(() -> {
                 orientation(LinearLayout.HORIZONTAL);
-                gravity(CENTER);
-                size(MATCH, dip(40));
+                gravity((largeScreen && !isPortrait ? LEFT : CENTER) | CENTER_VERTICAL);
+                size(MATCH, MATCH);
 
                 if (isAdvancedRepeatEnabled) {
                     final String[] dayLabels = context.getResources().getStringArray(R.array.repeat_days);
@@ -112,9 +114,7 @@ public class AlarmLayout {
                         advancedRepeatButton(theme, label, calendarDay, isPressed);
                     }
                 }
-
             });
-
         });
     }
 
@@ -122,12 +122,14 @@ public class AlarmLayout {
         button(() ->{
             Drawable bg = Anvil.currentView().getResources().getDrawable(R.drawable.oval_shape);
             if (isPressed) {
-                bg.setColorFilter(theme.accentColor, PorterDuff.Mode.SRC_ATOP);
+                bg.setColorFilter(theme.accentColor, PorterDuff.Mode.SRC);
             } else {
-                bg.setColorFilter(theme.primaryDarkColor, PorterDuff.Mode.SRC_ATOP);
+                bg.setColorFilter(theme.primaryDarkColor, PorterDuff.Mode.SRC);
             }
+
             backgroundDrawable(bg);
-            size(dip(40), dip(40));
+            int size = isLargeScreen() ? dip(60) : dip(40);
+            size(size, size);
             text(label);
             textColor(theme.primaryTextColor);
             pressed(isPressed);
@@ -144,16 +146,20 @@ public class AlarmLayout {
 
     private static void advancedRepeatCheckbox(boolean isRepeatOnDaysActive, View.OnClickListener onClickListener) {
         final Theme theme = Theme.get(App.getState().settings().theme());
+        int w = Anvil.currentView().getWidth();
+        boolean isLargeScreenLandscape = isLargeScreen() && !isPortrait();
         linearLayout(() -> {
+            size(w / 2, WRAP);
             backgroundColor(theme.backgroundColor);
             orientation(LinearLayout.HORIZONTAL);
-            gravity(CENTER);
-
+            gravity(isLargeScreenLandscape ? RIGHT : CENTER);
+            //margin(0, 0, 0, !isLargeScreenLandscape ? dip(8) : 0);
             checkBox(() -> {
                 onClick(onClickListener);
                 checked(isRepeatOnDaysActive);
             });
             textView(() -> {
+                margin(0, 0, dip(8), 0);
                 text(R.string.settings_advanced_repeat);
                 textColor(theme.primaryTextColor);
                 onClick(onClickListener);
@@ -200,8 +206,7 @@ public class AlarmLayout {
         frameLayout(() -> {
             size(FILL, FILL);
             // On tablets leave some margin around the clock view to avoid gigantic circles
-            if ((Anvil.currentView().getResources().getConfiguration().screenLayout &
-                    Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE) {
+            if (isLargeScreen()) {
                 margin(dip(48));
             } else {
                 margin(dip(8));
@@ -326,6 +331,11 @@ public class AlarmLayout {
                 });
             }
         });
+    }
+
+    private static boolean isLargeScreen() {
+        return (Anvil.currentView().getResources().getConfiguration().screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
     private static void bottomBar() {
